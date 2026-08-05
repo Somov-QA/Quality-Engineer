@@ -1,0 +1,16 @@
+meta {
+  name: product
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{SITE_URL}}/product.php?id=123&token={{token}}
+  body: none
+  auth: none
+}
+
+params:query {
+  id: 123
+  token: {{token}}
+}

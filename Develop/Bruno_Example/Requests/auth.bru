@@ -1,0 +1,27 @@
+meta {
+  name: auth
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{SITE_URL}}/auth.php?name=admin&pass=0000
+  body: none
+  auth: none
+}
+
+params:query {
+  name: admin
+  pass: 0000
+}
+
+body:json {
+  {
+    "name": "admin",
+    "pass": "0000"
+  }
+}
+
+vars:post-response {
+  token: res.body.token
+}
