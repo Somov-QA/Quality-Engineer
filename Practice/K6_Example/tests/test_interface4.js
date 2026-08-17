@@ -33,16 +33,50 @@ export const options = {
     },
 };
 
+/*
+export const options = {
+    scenarios: {
+        ui: {
+            executor: 'constant-vus',   // постоянное число VU
+            vus: 100,                  // 100 пользователей
+            duration: '30s',           // тест длится 30 секунд
+            gracefulStop: '30s',       // время на завершение после окончания
+            options: {                 // если нужен браузер – оставляем
+                browser: {
+                    type: 'chromium',
+                },
+            },
+        },
+    },
+};
+*/
+
+/*
+export const options = {
+    scenarios: {
+        ui: {
+            executor: 'ramping-vus',
+            startVUs: 0,
+            stages: [
+                { duration: '30s', target: 100 }, // за 30 секунд выйти на 100 VU
+            ],
+            gracefulStop: '30s',
+            options: {
+                browser: {
+                    type: 'chromium',
+                },
+            },
+        },
+    },
+};
+*/
+
 export default async function () {
     const page = await browser.newPage();
 
-    // Логируем консоль браузера
-    //page.on('console', (msg) => {
-    //    console.log('🖥️ Browser log:', msg.text());
-    //});
-
     try {
-        await gotoWithRetry(page, 'https://somovstudio.github.io/test.html');
+        await page.goto('https://somovstudio.github.io/test.html');
+        //await gotoWithRetry(page, 'http://localhost/Test_API/auth.html');
 
         await page.fill('#login', 'admin');
         await page.fill('#pass', '0000');
