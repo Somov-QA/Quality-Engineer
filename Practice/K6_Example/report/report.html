@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K6 Отчёт о нагрузочном тестировании</title>
+    <!-- Font Awesome 6 (бесплатные иконки) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ── Общие сбросы и шрифты ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #f4f7fc;
+            color: #1a2639;
+            padding: 2rem 1.5rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ── Заголовок ── */
+        .report-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            padding: 1.5rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 30px rgba(0, 20, 40, 0.06);
+            margin-bottom: 2rem;
+        }
+
+        .report-header h1 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .report-header h1 i {
+            color: #2a7de1;
+        }
+
+        .report-header .badge {
+            background: #eef3fa;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: #2c3e66;
+        }
+
+        .upload-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .upload-btn-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .btn-upload {
+            background: #2a7de1;
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-upload:hover {
+            background: #1b62b5;
+        }
+
+        .btn-upload i {
+            font-size: 1rem;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #3f5575;
+            background: #eef3fa;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── Сводка (KPI) ── */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1.2rem 1.2rem 1rem;
+            box-shadow: 0 4px 16px rgba(0, 20, 40, 0.04);
+            transition: transform 0.15s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #6b7e9c;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0b1a33;
+            margin-top: 0.2rem;
+            line-height: 1.2;
+        }
+
+        .kpi-sub {
+            font-size: 0.8rem;
+            color: #4a6185;
+            margin-top: 0.2rem;
+        }
+
+        .kpi-card .trend {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 0.3rem;
+        }
+
+        .trend.good {
+            background: #dff0d8;
+            color: #2a6b3b;
+        }
+        .trend.warn {
+            background: #fef3d7;
+            color: #8a6d1f;
+        }
+        .trend.bad {
+            background: #f8dddd;
+            color: #a53d3d;
+        }
+
+        /* ── Сетка карточек метрик ── */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.25rem 1.5rem 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 20, 40, 0.04);
+            transition: box-shadow 0.2s;
+            border-left: 4px solid #2a7de1;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 20, 40, 0.08);
+        }
+
+        .metric-card .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .metric-card .card-header .title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1a2a4a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metric-card .card-header .title i {
+            color: #2a7de1;
+            width: 1.4rem;
+            text-align: center;
+        }
+
+        .metric-card .card-header .status-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            background: #eef3fa;
+            color: #2c3e66;
+        }
+
+        .metric-card .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0b1a33;
+            line-height: 1.1;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-card .metric-detail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.2rem;
+            font-size: 0.85rem;
+            color: #3f5575;
+            margin-top: 0.2rem;
+        }
+
+        .metric-card .metric-detail span {
+            background: #f4f8fe;
+            padding: 0.1rem 0.7rem;
+            border-radius: 30px;
+            white-space: nowrap;
+        }
+
+        .metric-card .metric-detail .label {
+            background: transparent;
+            padding: 0;
+            font-weight: 500;
+            color: #5a6f8c;
+        }
+
+        .metric-card .explanation {
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: #4a6185;
+            border-top: 1px solid #ecf2f9;
+            padding-top: 0.7rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .metric-card .explanation i {
+            color: #6c8ab0;
+            font-size: 0.8rem;
+            margin-top: 0.15rem;
+        }
+
+        .metric-card .explanation .text {
+            flex: 1;
+        }
+
+        /* ── Цветовые акценты для карточек ── */
+        .metric-card.border-green {
+            border-left-color: #2b8c4a;
+        }
+        .metric-card.border-orange {
+            border-left-color: #d48f2b;
+        }
+        .metric-card.border-red {
+            border-left-color: #c0392b;
+        }
+        .metric-card.border-purple {
+            border-left-color: #7b5ea7;
+        }
+        .metric-card.border-teal {
+            border-left-color: #1f8a8a;
+        }
+        .metric-card.border-gray {
+            border-left-color: #8a9bb5;
+        }
+
+        /* ── Таблица чеков ── */
+        .checks-section {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 20, 40, 0.04);
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .checks-section h3 {
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .checks-section h3 i {
+            color: #2a7de1;
+        }
+
+        .checks-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .checks-table th {
+            text-align: left;
+            padding: 0.6rem 0.4rem 0.6rem 0;
+            font-weight: 600;
+            color: #3f5575;
+            border-bottom: 2px solid #e6edf6;
+        }
+
+        .checks-table td {
+            padding: 0.5rem 0.4rem 0.5rem 0;
+            border-bottom: 1px solid #edf2f9;
+            color: #1a2a4a;
+        }
+
+        .checks-table .check-pass {
+            color: #2b8c4a;
+            font-weight: 600;
+        }
+
+        .checks-table .check-fail {
+            color: #c0392b;
+            font-weight: 600;
+        }
+
+        .checks-table .check-rate {
+            font-weight: 600;
+        }
+
+        /* ── Футер ── */
+        .footer {
+            text-align: center;
+            color: #7a8ba8;
+            font-size: 0.85rem;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e9f3;
+        }
+
+        /* ── Адаптивность ── */
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .report-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.2rem;
+            }
+            .upload-area {
+                width: 100%;
+            }
+            .btn-upload {
+                width: 100%;
+                justify-content: center;
+            }
+            .file-name {
+                max-width: 100%;
+            }
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .checks-section {
+                padding: 1.2rem;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.7rem;
+            }
+            .kpi-value {
+                font-size: 1.5rem;
+            }
+            .metric-card .metric-value {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* ── Загрузка ── */
+        .drop-zone {
+            border: 2px dashed #cbd8e9;
+            border-radius: 24px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: #5a6f8c;
+            background: #fafcff;
+            margin-bottom: 1.5rem;
+            transition: background 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .drop-zone.dragover {
+            background: #eaf1fe;
+            border-color: #2a7de1;
+        }
+
+        .drop-zone i {
+            font-size: 2.4rem;
+            color: #8aa3c2;
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone p {
+            font-weight: 500;
+        }
+
+        .drop-zone small {
+            color: #8a9bb5;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* анимация появления */
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Шапка -->
+        <div class="report-header">
+            <h1><i class="fas fa-chart-line"></i> K6 Отчёт</h1>
+            <div class="upload-area">
+                <span class="badge"><i class="far fa-calendar-alt"></i> <span id="reportDate">—</span></span>
+                <div class="upload-btn-wrapper">
+                    <button class="btn-upload"><i class="fas fa-cloud-upload-alt"></i> Загрузить JSON</button>
+                    <input type="file" id="fileInput" accept=".json" />
+                </div>
+                <span class="file-name" id="fileName">report_interface.json</span>
+            </div>
+        </div>
+
+        <!-- Drop-zone (для drag&drop) -->
+        <div class="drop-zone" id="dropZone">
+            <i class="fas fa-file-import"></i>
+            <p>Перетащите сюда JSON-отчёт K6</p>
+            <small>или нажмите на кнопку выше</small>
+        </div>
+
+        <!-- Контейнер для данных (рендерится JS) -->
+        <div id="reportContent"></div>
+
+        <div class="footer">
+            <i class="far fa-clock"></i> Данные обновлены при загрузке &bull;
+            <span id="footerTime"></span>
+        </div>
+    </div>
+
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 1. ЭТАЛОННЫЙ JSON (из задания)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const DEFAULT_JSON = {
+            "root_group": {
+                "name": "",
+                "path": "",
+                "id": "d41d8cd98f00b204e9800998ecf8427e",
+                "groups": {},
+                "checks": {
+                    "successful login": {
+                        "name": "successful login",
+                        "path": "::successful login",
+                        "id": "a59ae74d39d5abf7c0d8de81e014780a",
+                        "passes": 20,
+                        "fails": 0
+                    }
+                }
+            },
+            "metrics": {
+                "browser_web_vital_ttfb": {
+                    "avg": 268.1099999997765,
+                    "min": 2.099999997764826,
+                    "med": 10.550000000745058,
+                    "max": 2691.2000000029802,
+                    "p(90)": 680.0999999992565,
+                    "p(95)": 1733.124999999442
+                },
+                "iteration_duration": {
+                    "min": 1844.517,
+                    "med": 10800.459900000002,
+                    "max": 21977.9931,
+                    "p(90)": 21779.40009,
+                    "p(95)": 21795.759255,
+                    "avg": 11345.249775000002
+                },
+                "browser_data_received": {
+                    "count": 2092286,
+                    "rate": 53544.53091176165
+                },
+                "browser_data_sent": {
+                    "count": 6480,
+                    "rate": 165.8322812025772
+                },
+                "browser_web_vital_lcp": {
+                    "med": 896,
+                    "max": 2820,
+                    "p(90)": 1423.9999999999995,
+                    "p(95)": 1923.5999999999979,
+                    "avg": 934.9473684210526,
+                    "min": 148
+                },
+                "checks": {
+                    "fails": 0,
+                    "passes": 20,
+                    "value": 1
+                },
+                "browser_http_req_duration": {
+                    "avg": 299.6116666666666,
+                    "min": 3.361,
+                    "med": 30.5435,
+                    "max": 2691.508,
+                    "p(90)": 776.1207000000004,
+                    "p(95)": 1369.1757999999982
+                },
+                "browser_web_vital_cls": {
+                    "p(95)": 0,
+                    "avg": 0,
+                    "min": 0,
+                    "med": 0,
+                    "max": 0,
+                    "p(90)": 0
+                },
+                "iterations": {
+                    "count": 20,
+                    "rate": 0.5118280284030161
+                },
+                "vus": {
+                    "value": 1,
+                    "min": 1,
+                    "max": 10
+                },
+                "data_sent": {
+                    "count": 0,
+                    "rate": 0
+                },
+                "data_received": {
+                    "count": 0,
+                    "rate": 0
+                },
+                "browser_http_req_failed": {
+                    "passes": 0,
+                    "fails": 30,
+                    "value": 0
+                },
+                "browser_web_vital_fcp": {
+                    "avg": 938.6,
+                    "min": 148,
+                    "med": 952,
+                    "max": 2820,
+                    "p(90)": 1374.0000000000007,
+                    "p(95)": 1873.8000000000006
+                },
+                "vus_max": {
+                    "value": 10,
+                    "min": 10,
+                    "max": 10
+                }
+            }
+        };
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 2. ОПИСАНИЯ МЕТРИК (для пояснений)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const METRIC_INFO = {
+            browser_web_vital_ttfb: {
+                label: 'TTFB (Time to First Byte)',
+                icon: 'fa-arrows-alt-h',
+                desc: 'Время от запроса до получения первого байта ответа. Хорошо &lt; 200 мс.',
+                unit: 'мс',
+                border: 'border-teal',
+                format: (v) => v.toFixed(1)
+            },
+            browser_web_vital_lcp: {
+                label: 'LCP (Largest Contentful Paint)',
+                icon: 'fa-image',
+                desc: 'Время загрузки самого крупного элемента на странице. Хорошо &lt; 2500 мс.',
+                unit: 'мс',
+                border: 'border-green',
+                format: (v) => v.toFixed(0)
+            },
+            browser_web_vital_fcp: {
+                label: 'FCP (First Contentful Paint)',
+                icon: 'fa-paint-brush',
+                desc: 'Время появления первого контента. Хорошо &lt; 1800 мс.',
+                unit: 'мс',
+                border: 'border-purple',
+                format: (v) => v.toFixed(0)
+            },
+            browser_web_vital_cls: {
+                label: 'CLS (Cumulative Layout Shift)',
+                icon: 'fa-arrows-alt',
+                desc: 'Сдвиг макета в процессе загрузки. Хорошо &lt; 0.1.',
+                unit: '',
+                border: 'border-orange',
+                format: (v) => v.toFixed(3)
+            },
+            browser_http_req_duration: {
+                label: 'HTTP запросы (длительность)',
+                icon: 'fa-clock',
+                desc: 'Средняя длительность всех HTTP-запросов браузера.',
+                unit: 'мс',
+                border: 'border-gray',
+                format: (v) => v.toFixed(1)
+            },
+            iteration_duration: {
+                label: 'Длительность итерации',
+                icon: 'fa-sync-alt',
+                desc: 'Время выполнения одной итерации сценария.',
+                unit: 'мс',
+                border: 'border-purple',
+                format: (v) => v.toFixed(0)
+            },
+            browser_data_received: {
+                label: 'Получено данных (браузер)',
+                icon: 'fa-download',
+                desc: 'Общий объём данных, полученных браузером за тест.',
+                unit: 'байт',
+                border: 'border-teal',
+                format: (v) => v.toLocaleString()
+            },
+            browser_data_sent: {
+                label: 'Отправлено данных (браузер)',
+                icon: 'fa-upload',
+                desc: 'Общий объём данных, отправленных браузером за тест.',
+                unit: 'байт',
+                border: 'border-gray',
+                format: (v) => v.toLocaleString()
+            },
+            iterations: {
+                label: 'Итерации',
+                icon: 'fa-repeat',
+                desc: 'Количество выполненных итераций сценария.',
+                unit: '',
+                border: 'border-green',
+                format: (v) => v.toFixed(0)
+            },
+            vus: {
+                label: 'Виртуальные пользователи (VUs)',
+                icon: 'fa-users',
+                desc: 'Текущее количество активных VUs.',
+                unit: '',
+                border: 'border-orange',
+                format: (v) => v.toFixed(0)
+            },
+            vus_max: {
+                label: 'Максимум VUs',
+                icon: 'fa-user-plus',
+                desc: 'Максимальное количество VUs за тест.',
+                unit: '',
+                border: 'border-red',
+                format: (v) => v.toFixed(0)
+            },
+            browser_http_req_failed: {
+                label: 'Ошибки HTTP-запросов',
+                icon: 'fa-times-circle',
+                desc: 'Количество неудачных HTTP-запросов (статус ≥ 400).',
+                unit: '',
+                border: 'border-red',
+                format: (v) => v.toFixed(0)
+            },
+            checks: {
+                label: 'Checks (проверки)',
+                icon: 'fa-check-circle',
+                desc: 'Общее количество успешных / неудачных проверок.',
+                unit: '',
+                border: 'border-green',
+                format: (v) => v.toFixed(0)
+            }
+        };
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 3. ОСНОВНАЯ ЛОГИКА ОТОБРАЖЕНИЯ
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function renderReport(data) {
+            const container = document.getElementById('reportContent');
+            if (!data || !data.metrics) {
+                container.innerHTML = `<div class="drop-zone" style="border-color:#dba8a8; background:#fff6f6;">
+                    <i class="fas fa-exclamation-triangle" style="color:#c0392b;"></i>
+                    <p>Не удалось распарсить JSON. Проверьте структуру.</p>
+                </div>`;
+                return;
+            }
+
+            const m = data.metrics;
+            const root = data.root_group || {};
+            const checksMap = root.checks || {};
+
+            // ── Общая сводка (KPI) ──
+            const totalIterations = m.iterations?.count ?? 0;
+            const totalPasses = m.checks?.passes ?? 0;
+            const totalFails = m.checks?.fails ?? 0;
+            const successRate = totalPasses + totalFails > 0 ?
+                (totalPasses / (totalPasses + totalFails) * 100) :
+                100;
+
+            const avgDuration = m.iteration_duration?.avg ?? 0;
+            const reqFailed = m.browser_http_req_failed?.fails ?? 0;
+            const totalReqs = (m.browser_http_req_failed?.passes ?? 0) + reqFailed;
+            const failRate = totalReqs > 0 ? (reqFailed / totalReqs * 100) : 0;
+
+            const kpiHTML = `
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-tasks"></i> Итерации</div>
+                        <div class="kpi-value">${totalIterations}</div>
+                        <div class="kpi-sub">${(m.iterations?.rate ?? 0).toFixed(2)} итер/с</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-check-circle"></i> Успешность checks</div>
+                        <div class="kpi-value">${successRate.toFixed(1)}%</div>
+                        <div class="kpi-sub">${totalPasses} ✅ / ${totalFails} ❌</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-exclamation-triangle"></i> Ошибки HTTP</div>
+                        <div class="kpi-value">${failRate.toFixed(1)}%</div>
+                        <div class="kpi-sub">${reqFailed} ошибок</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-users"></i> VUs (макс.)</div>
+                        <div class="kpi-value">${m.vus_max?.value ?? 0}</div>
+                        <div class="kpi-sub">текущие: ${m.vus?.value ?? 0}</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label"><i class="fas fa-hourglass-half"></i> Средняя итерация</div>
+                        <div class="kpi-value">${(avgDuration / 1000).toFixed(1)}с</div>
+                        <div class="kpi-sub">${avgDuration.toFixed(0)} мс</div>
+                    </div>
+                </div>
+            `;
+
+            // ── Карточки метрик ──
+            let metricsHTML = '';
+            const metricKeys = Object.keys(m).filter(key => key !== 'checks' && key !== 'data_sent' && key !==
+                'data_received');
+
+            for (const key of metricKeys) {
+                const metric = m[key];
+                if (!metric || typeof metric !== 'object') continue;
+                const info = METRIC_INFO[key];
+                if (!info) continue; // пропускаем неизвестные
+
+                // Собираем значения для отображения
+                let mainVal = '-';
+                let detailParts = [];
+
+                if (key === 'browser_http_req_failed') {
+                    const passes = metric.passes ?? 0;
+                    const fails = metric.fails ?? 0;
+                    mainVal = `${fails} ошибок`;
+                    detailParts.push(`✅ ${passes} успешных`);
+                } else if (key === 'checks') {
+                    const passes = metric.passes ?? 0;
+                    const fails = metric.fails ?? 0;
+                    mainVal = `${passes} ✅ / ${fails} ❌`;
+                    detailParts.push(`всего ${passes + fails}`);
+                } else if (key === 'vus' || key === 'vus_max') {
+                    mainVal = info.format(metric.value ?? 0);
+                    if (key === 'vus') {
+                        detailParts.push(`мин: ${metric.min ?? 0}`, `макс: ${metric.max ?? 0}`);
+                    } else {
+                        detailParts.push(`мин: ${metric.min ?? 0}`, `макс: ${metric.max ?? 0}`);
+                    }
+                } else if (key === 'iterations') {
+                    mainVal = info.format(metric.count ?? 0);
+                    detailParts.push(`скорость: ${(metric.rate ?? 0).toFixed(2)}/с`);
+                } else if (key === 'browser_data_received' || key === 'browser_data_sent') {
+                    mainVal = info.format(metric.count ?? 0);
+                    detailParts.push(`скорость: ${(metric.rate ?? 0).toFixed(0)} байт/с`);
+                } else {
+                    // числовые метрики: avg, med, p(95) и т.д.
+                    const avg = metric.avg ?? metric.med ?? metric.value ?? 0;
+                    mainVal = info.format(avg);
+                    if (metric.med !== undefined) detailParts.push(`медиана: ${info.format(metric.med)}`);
+                    if (metric.p95 !== undefined) detailParts.push(`p95: ${info.format(metric.p95)}`);
+                    if (metric.min !== undefined) detailParts.push(`мин: ${info.format(metric.min)}`);
+                    if (metric.max !== undefined) detailParts.push(`макс: ${info.format(metric.max)}`);
+                    if (metric.p90 !== undefined) detailParts.push(`p90: ${info.format(metric.p90)}`);
+                    if (metric.avg !== undefined && key !== 'browser_web_vital_cls') {
+                        // уже есть avg
+                    }
+                }
+
+                // Статус (для цветного индикатора)
+                let statusClass = 'border-gray';
+                let statusText = '';
+                if (info.border) statusClass = info.border;
+
+                // дополнительный текстовый статус для некоторых метрик
+                if (key === 'browser_web_vital_ttfb') {
+                    const val = metric.avg ?? 0;
+                    if (val < 200) statusText = '✅ отлично';
+                    else if (val < 500) statusText = '⚠️ норма';
+                    else statusText = '❌ медленно';
+                } else if (key === 'browser_web_vital_lcp') {
+                    const val = metric.avg ?? 0;
+                    if (val < 2500) statusText = '✅ хорошо';
+                    else if (val < 4000) statusText = '⚠️ требует внимания';
+                    else statusText = '❌ плохо';
+                } else if (key === 'browser_web_vital_cls') {
+                    const val = metric.avg ?? 0;
+                    if (val < 0.1) statusText = '✅ стабильно';
+                    else if (val < 0.25) statusText = '⚠️ средний сдвиг';
+                    else statusText = '❌ сильный сдвиг';
+                } else if (key === 'browser_http_req_failed') {
+                    const fails = metric.fails ?? 0;
+                    if (fails === 0) statusText = '✅ нет ошибок';
+                    else statusText = `❌ ${fails} ошибок`;
+                }
+
+                metricsHTML += `
+                    <div class="metric-card ${statusClass}">
+                        <div class="card-header">
+                            <div class="title"><i class="fas ${info.icon}"></i> ${info.label}</div>
+                            ${statusText ? `<span class="status-badge">${statusText}</span>` : ''}
+                        </div>
+                        <div class="metric-value">${mainVal}</div>
+                        <div class="metric-detail">
+                            ${detailParts.map(p => `<span>${p}</span>`).join('')}
+                        </div>
+                        <div class="explanation">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="text">${info.desc}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // ── Таблица checks ──
+            let checksHTML = '';
+            const checkEntries = Object.entries(checksMap);
+            if (checkEntries.length > 0) {
+                let rows = '';
+                for (const [name, ch] of checkEntries) {
+                    const total = (ch.passes || 0) + (ch.fails || 0);
+                    const rate = total > 0 ? (ch.passes / total * 100) : 0;
+                    rows += `
+                        <tr>
+                            <td><strong>${name}</strong></td>
+                            <td class="check-pass">${ch.passes ?? 0}</td>
+                            <td class="check-fail">${ch.fails ?? 0}</td>
+                            <td class="check-rate">${rate.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                }
+                checksHTML = `
+                    <div class="checks-section">
+                        <h3><i class="fas fa-clipboard-list"></i> Проверки (Checks)</h3>
+                        <table class="checks-table">
+                            <thead>
+                                <tr><th>Название</th><th>✅ Успешно</th><th>❌ Провалено</th><th>Успешность</th></tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // ── Собираем всё ──
+            container.innerHTML = `
+                ${kpiHTML}
+                <div class="metrics-grid">${metricsHTML}</div>
+                ${checksHTML}
+            `;
+
+            // Обновляем дату
+            document.getElementById('reportDate').textContent = new Date().toLocaleDateString('ru-RU');
+            document.getElementById('footerTime').textContent = new Date().toLocaleTimeString('ru-RU');
+
+            // Сохраняем имя файла
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files && fileInput.files.length > 0) {
+                document.getElementById('fileName').textContent = fileInput.files[0].name;
+            } else {
+                document.getElementById('fileName').textContent = 'report_interface.json (демо)';
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 4. ЗАГРУЗКА JSON (файл, drag&drop, дефолт)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function loadJSON(jsonData) {
+            try {
+                renderReport(jsonData);
+            } catch (e) {
+                console.error(e);
+                document.getElementById('reportContent').innerHTML = `
+                    <div class="drop-zone" style="border-color:#dba8a8; background:#fff6f6;">
+                        <i class="fas fa-exclamation-triangle" style="color:#c0392b;"></i>
+                        <p>Ошибка парсинга JSON: ${e.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function loadFromFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    loadJSON(data);
+                } catch (err) {
+                    alert('Не удалось разобрать JSON-файл.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ── Обработчики ──
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                loadFromFile(this.files[0]);
+            }
+        });
+
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/json' || file.name.endsWith('.json')) {
+                    loadFromFile(file);
+                    // синхронизируем input
+                    const input = document.getElementById('fileInput');
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    input.files = dt.files;
+                    document.getElementById('fileName').textContent = file.name;
+                } else {
+                    alert('Пожалуйста, загрузите JSON-файл.');
+                }
+            }
+        });
+
+        // Клик по дроп-зоне открывает диалог
+        dropZone.addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        // ── Загружаем демо-данные при старте ──
+        window.addEventListener('DOMContentLoaded', () => {
+            loadJSON(DEFAULT_JSON);
+        });
+    </script>
+</body>
+</html>
