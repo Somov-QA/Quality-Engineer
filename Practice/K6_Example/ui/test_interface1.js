@@ -1,32 +1,12 @@
 import { check } from 'k6';
-import { browser } from 'k6/browser';
+import k6Browser from 'k6/browser';
 
 export const options = {
     scenarios: {
         ui: {
-            executor: 'constant-vus',   // постоянное число VU
-            vus: 10,                    // 10 пользователей
-            duration: '30s',            // тест длится 30 секунд
-            gracefulStop: '30s',        // время на завершение после окончания
-            options: {                  // настройка браузера
-                browser: {
-                    type: 'chromium',
-                },
-            },
-        },
-    },
-};
-
-/*
-export const options = {
-    scenarios: {
-        ui: {
-            executor: 'ramping-vus',
-            startVUs: 0,
-            stages: [
-                { duration: '30s', target: 10 }, // за 30 секунд выйти на 100 VU
-            ],
-            gracefulStop: '30s',
+            executor: 'constant-vus',
+            vus: 5,
+            duration: '5s',
             options: {
                 browser: {
                     type: 'chromium',
@@ -35,15 +15,19 @@ export const options = {
         },
     },
 };
-*/
 
 export default async function () {
+    const browser = k6Browser.browser;
     const page = await browser.newPage();
 
-    try {
-        await page.goto('http://localhost/Test_API/auth.html');
+    // Логируем консоль браузера
+    //page.on('console', (msg) => {
+    //    console.log('🖥️ Browser log:', msg.text());
+    //});
 
-        // Заполняем поля формы
+    try {
+        await page.goto('https://somovstudio.github.io/test.html');
+
         await page.fill('#login', 'admin');
         await page.fill('#pass', '0000');
 
@@ -64,7 +48,7 @@ export default async function () {
             '#textarea'
         );
 
-        const resultText = await page.inputValue('#textarea');
+        const resultText = await page.inputValue('#textarea'); // используем inputValue для textarea
         console.log('🔍 Текст из #textarea:', resultText);
 
         check(resultText, {
