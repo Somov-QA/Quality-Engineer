@@ -20,3 +20,7 @@
 	npx playwright install --with-deps
 	npx playwright install chromium
 
+6) Запуск теста
+
+	npx playwright test demo.spec.ts
+	npx playwright test tests/demo.spec.ts --reporter=list
