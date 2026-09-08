@@ -1,0 +1,13 @@
+
+# Playwright
+/node_modules/
+/playwright-report/
+/playwright/.cache/
+/playwright/.auth/
+/test-results/
+/blob-report/
+/allure-report/
+/allure-results/
+
+# Playwright
+node_modules/
