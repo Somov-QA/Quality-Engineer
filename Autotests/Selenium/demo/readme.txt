@@ -34,3 +34,6 @@
 
 	node tests/demo.test.js
 
+7) Установка из файла package.json
+
+	npm install
