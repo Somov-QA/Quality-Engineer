@@ -11,18 +11,26 @@
 	chromedriver --v
 
 2) Скачать и установить Visual Studio Code
+
+	https://code.visualstudio.com/download/
+
 3) Скачать и установить NodeJS
-4) Команда для проверки версии NodeJS:
+
+	https://nodejs.org/en/download
+
+	команда для проверки версии NodeJS:
 
 	npm -v
 
-5) Создать папку проекта и выполнить установку драйвера
+4) Установку Selenium
 
 	npm install selenium-webdriver
 	
 	проверка версии драйвера
 	
 	npm show selenium-webdriver version
-	
 
+6) Запуск теста
+
+	node tests/demo.test.js
 
