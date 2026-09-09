@@ -24,3 +24,9 @@
 
 	npx playwright test demo.spec.ts
 	npx playwright test tests/demo.spec.ts --reporter=list
+	npx playwright test tests/demo.spec.ts --reporter=html
+	
+7) Установка из файла package.json
+
+	npm install
+
