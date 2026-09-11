@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "de3daec811376549",
+            "id": "a529bf435799e862",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -188,10 +188,13 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "de3daec811376549",
+  "active": "a529bf435799e862",
   "lastOpenFiles": [
-    "assets/images/563c0790993611eeaa521e5d9776cfa6_upscaled.jpg",
+    "создайте ссылку.md",
     "Добро пожаловать.md",
+    "Локаторы/Язык XPATH и сравнение с CSS.md",
+    "Локаторы",
+    "assets/images/563c0790993611eeaa521e5d9776cfa6_upscaled.jpg",
     "assets/images",
     "assets"
   ]
