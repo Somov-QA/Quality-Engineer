@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Добро пожаловать.md",
+                "file": "assets/Шаблон.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Добро пожаловать"
+              "title": "Шаблон"
             }
           }
         ]
@@ -190,9 +190,10 @@
   },
   "active": "a529bf435799e862",
   "lastOpenFiles": [
-    "создайте ссылку.md",
-    "Добро пожаловать.md",
     "Локаторы/Язык XPATH и сравнение с CSS.md",
+    "assets/Шаблон.md",
+    "Добро пожаловать.md",
+    "создайте ссылку.md",
     "Локаторы",
     "assets/images/563c0790993611eeaa521e5d9776cfa6_upscaled.jpg",
     "assets/images",
