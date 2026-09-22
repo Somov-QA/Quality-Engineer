@@ -23,3 +23,13 @@
 | 1         | значение 1   |
 | 2         | значение 2   |
 
+```typescript
+// Ваш код на TypeScript
+interface User {
+  name: string;
+  age: number;
+}
+const user: User = { name: "Alice", age: 30 };
+```
+
+
