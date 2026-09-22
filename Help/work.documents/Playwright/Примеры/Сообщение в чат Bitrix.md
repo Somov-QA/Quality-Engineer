@@ -13,7 +13,7 @@ static async postMessageToBitrixChat(request: APIRequestContext, webhookUrl: str
 			// MESSAGE - Текст сообщения
 			MESSAGE: messageText,
 			// SYSTEM - для системного сообщения ("N" или "Y")
-		SYSTEM: system,
+			SYSTEM: system,
 		},
 	});
 	const responseBody = await response.text();
