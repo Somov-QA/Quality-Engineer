@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "1С/Значение из таблицы.md",
+                "file": "Playwright/Примеры/Сообщение в чат Bitrix.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Значение из таблицы"
+              "title": "Сообщение в чат Bitrix"
             }
           }
         ],
@@ -205,13 +205,13 @@
   },
   "active": "fd90d508492df4c5",
   "lastOpenFiles": [
+    "Playwright/Примеры/Разное.md",
     "1С/Открыть ссылку.md",
-    "1С/Значение из таблицы.md",
     "1С/Запомнить значение в буфер обмена.md",
+    "1С/Значение из таблицы.md",
     "1С/assets/images/Pasted image 20260922103044.png",
     "1С/assets/images/Pasted image 20260922103007.png",
     "Playwright/Примеры/Сообщение в чат Bitrix.md",
-    "Playwright/Примеры/Разное.md",
     "Локаторы/Язык XPATH и сравнение с CSS.md",
     "Playwright/Примеры",
     "Добро пожаловать.md",
