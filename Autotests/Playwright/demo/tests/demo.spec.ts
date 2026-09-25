@@ -15,7 +15,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Авторизация', async ({ page }) => {
-    await page.goto('https://somovstudio._github.io/test.html');
+    await page.goto('https://somovstudio.github.io/test.html');
     await expect(page).toHaveTitle('Тестовая страница');
     await page.locator('#login').fill('admin');
     await page.locator('#pass').fill('0000');
