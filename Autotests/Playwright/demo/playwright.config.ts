@@ -1,6 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-
 export default defineConfig({
   testDir: './tests', // папка с тестами
   timeout: 300000,  // максимальное время ожидания

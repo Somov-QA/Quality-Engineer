@@ -34,9 +34,23 @@
               "icon": "lucide-file",
               "title": "Размер окна браузера"
             }
+          },
+          {
+            "id": "795fe012297f84aa",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Playwright/Примеры/Простой автотест.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Простой автотест"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -203,11 +217,12 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "518a939733dd6f5d",
+  "active": "795fe012297f84aa",
   "lastOpenFiles": [
-    "Playwright/Примеры/РАЗНОЕ.md",
     "Playwright/Примеры/Размер окна браузера.md",
     "Шаблон Markdown.md",
+    "Playwright/Примеры/Простой автотест.md",
+    "Playwright/Примеры/РАЗНОЕ.md",
     "Playwright/Примеры/Сообщение в чат Bitrix.md",
     "1С/Открыть ссылку.md",
     "1С/Запомнить значение в буфер обмена.md",
