@@ -22,27 +22,13 @@
             }
           },
           {
-            "id": "4b3a5887228040eb",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Playwright/Примеры/РАЗНОЕ.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "РАЗНОЕ"
-            }
-          },
-          {
             "id": "33d1317854986f84",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
                 "file": "Playwright/Примеры/Паттерны PageObjects и StepObjects.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -50,7 +36,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -220,15 +206,16 @@
   "active": "33d1317854986f84",
   "lastOpenFiles": [
     "Playwright/Примеры/РАЗНОЕ.md",
+    "Playwright/Примеры/Сообщение в чат Bitrix.md",
+    "Playwright/Примеры/Размер окна браузера (viewport).md",
+    "Playwright/Примеры/Простой автотест (test).md",
+    "Шаблон Markdown.md",
     "Playwright/Примеры/Паттерны PageObjects и StepObjects.md",
+    "Playwright/Примеры/Маскировка автоматизации.md",
+    "Добро пожаловать.md",
     "Playwright/Примеры/assets/images/Pasted image 20260928125328.png",
     "Playwright/Примеры/assets/images",
     "Playwright/Примеры/assets",
-    "Playwright/Примеры/Маскировка автоматизации.md",
-    "Playwright/Примеры/Сообщение в чат Bitrix.md",
-    "Playwright/Примеры/Простой автотест (demo).md",
-    "Playwright/Примеры/Размер окна браузера (viewport).md",
-    "Шаблон Markdown.md",
     "1С/Открыть ссылку.md",
     "1С/Запомнить значение в буфер обмена.md",
     "1С/Значение из таблицы.md",
@@ -236,7 +223,6 @@
     "1С/assets/images/Pasted image 20260922103007.png",
     "Локаторы/Язык XPATH и сравнение с CSS.md",
     "Playwright/Примеры",
-    "Добро пожаловать.md",
     "Playwright",
     "1С/assets/images/Pasted image 20260917094131.png",
     "1С/assets/images/Pasted image 20260917093426.png",
