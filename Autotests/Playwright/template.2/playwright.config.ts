@@ -20,7 +20,6 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
   },
 
-  /* Configure projects for major browsers */
   projects: [
     {
       name: 'Google Chrome',
